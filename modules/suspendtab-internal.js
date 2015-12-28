@@ -28,8 +28,8 @@ function isInternalAPIsAvailable() {
 		Cu.reportError(new Error('suspendtab: SessionStoreInternal does not have restoreTabContent() method'));
 		return false;
 	}
-	if (typeof SessionStoreInternal._nextRestoreEpoch == 'undefined') {
-		Cu.reportError(new Error('suspendtab: SessionStoreInternal does not have _nextRestoreEpoch'));
+	if (typeof SessionStoreInternal.startNextEpoch == 'undefined') {
+		Cu.reportError(new Error('suspendtab: SessionStoreInternal does not have startNextEpoch'));
 		return false;
 	}
 	if (typeof SessionStoreInternal._browserEpochs == 'undefined') {
@@ -41,10 +41,11 @@ function isInternalAPIsAvailable() {
 		Cu.reportError(new Error('suspendtab: Failed to load TabState'));
 		return false;
 	}
-	if (!TabState.flush) {
-		Cu.reportError(new Error('suspendtab: TabState does not have flush() method'));
-		return false;
-	}
+  //~ Not used????
+	//~ if (!TabState.flush) {
+		//~ Cu.reportError(new Error('suspendtab: TabState does not have flush() method'));
+		//~ return false;
+	//~ }
 	if (!TabState.clone) {
 		Cu.reportError(new Error('suspendtab: TabState does not have clone() method'));
 		return false;
@@ -327,11 +328,13 @@ SuspendTabInternal.prototype = inherit(require('const'), {
 		else // Firefox 32 or older
 			tabbrowser.updateBrowserRemoteness(browser, uri);
 
-		// Start a new epoch and include the epoch in the restoreHistory
-		// message. If a message is received that relates to a previous epoch, we
-		// discard it.
-		let epoch = SessionStoreInternal._nextRestoreEpoch++;
-		SessionStoreInternal._browserEpochs.set(browser.permanentKey, epoch);
+  /** SessionStore.jsm
+   * Each fresh tab starts out with epoch=0. This function can be used to
+   * start a next epoch by incrementing the current value. It will enables us
+   * to ignore stale messages sent from previous epochs. The function returns
+   * the new epoch ID for the given |browser|.
+   */
+    SessionStoreInternal.startNextEpoch(browser);
 
 		// keep the data around to prevent dataloss in case
 		// a tab gets closed before it's been properly restored

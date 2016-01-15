@@ -18,6 +18,7 @@ var { TAB_STATE_NEEDS_RESTORE } = Cu.import('resource:///modules/sessionstore/Se
 //var { TabRestoreStates } = Cu.import('resource:///modules/sessionstore/SessionStore.jsm', {});
 var { TabState } = Cu.import('resource:///modules/sessionstore/TabState.jsm', {});
 var { TabStateCache } = Cu.import('resource:///modules/sessionstore/TabStateCache.jsm', {});
+var { TabStateFlusher } = Cu.import("resource:///modules/sessionstore/TabStateFlusher.jsm", {});
 
 function isInternalAPIsAvailable() {
 	if (!SessionStoreInternal) {
@@ -41,11 +42,10 @@ function isInternalAPIsAvailable() {
 		Cu.reportError(new Error('suspendtab: Failed to load TabState'));
 		return false;
 	}
-  //~ Not used????
-	//~ if (!TabState.flush) {
-		//~ Cu.reportError(new Error('suspendtab: TabState does not have flush() method'));
-		//~ return false;
-	//~ }
+	if (!TabStateFlusher.flush) {
+		Cu.reportError(new Error('suspendtab: TabState does not have flush() method'));
+		return false;
+	}
 	if (!TabState.clone) {
 		Cu.reportError(new Error('suspendtab: TabState does not have clone() method'));
 		return false;
@@ -141,7 +141,7 @@ SuspendTabInternal.prototype = inherit(require('const'), {
 		var browser = aTab.linkedBrowser;
 		var wasBusy = aTab.getAttribute('busy') == 'true';
 
-		TabState.flush(browser);
+    TabStateFlusher.flush(browser);
 		var state = TabState.clone(aTab);
 		fullStates.set(aTab, state);
 
@@ -334,7 +334,8 @@ SuspendTabInternal.prototype = inherit(require('const'), {
    * to ignore stale messages sent from previous epochs. The function returns
    * the new epoch ID for the given |browser|.
    */
-    SessionStoreInternal.startNextEpoch(browser);
+    let epoch = SessionStoreInternal.startNextEpoch(browser);
+    SessionStoreInternal._browserEpochs.set(browser.permanentKey, epoch);
 
 		// keep the data around to prevent dataloss in case
 		// a tab gets closed before it's been properly restored

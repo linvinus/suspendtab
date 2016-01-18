@@ -235,15 +235,15 @@ SuspendTabInternal.prototype = inherit(require('const'), {
 			// Reloading action resumes the pending restoration.
 			// This will fire "SSTabRestored" event, then this method
 			// will be called again to restore actual history entries.
-			aTab.linkedBrowser.reload();
+			//~ aTab.linkedBrowser.reload();
 			return true;
 		}
 
 		{
-			let event = this.document.createEvent('Events');
-			event.initEvent(this.EVENT_TYPE_RESUMING, true, true);
-			if (!aTab.dispatchEvent(event))
-				return false;
+			//~ let event = this.document.createEvent('Events');
+			//~ event.initEvent(this.EVENT_TYPE_RESUMING, true, true);
+			//~ if (!aTab.dispatchEvent(event))
+				//~ return false;
 		}
 
 		var state = this.getTabState(aTab, true);
@@ -254,12 +254,12 @@ SuspendTabInternal.prototype = inherit(require('const'), {
 		delete aTab[this.READY];
 		fullStates.delete(aTab);
 
-		this.readyToResume(aTab);
-		SessionStoreInternal.restoreTabContent(aTab);
+		//~ this.readyToResume(aTab);
+		//~ SessionStoreInternal.restoreTabContent(aTab);
 
-		var event = this.document.createEvent('Events');
-		event.initEvent(this.EVENT_TYPE_RESUMED, true, false);
-		aTab.dispatchEvent(event);
+		//~ var event = this.document.createEvent('Events');
+		//~ event.initEvent(this.EVENT_TYPE_RESUMED, true, false);
+		//~ aTab.dispatchEvent(event);
 
 		if (this.debug)
 			aTab.setAttribute('tooltiptext', aTab.label);
@@ -335,7 +335,6 @@ SuspendTabInternal.prototype = inherit(require('const'), {
    * the new epoch ID for the given |browser|.
    */
     let epoch = SessionStoreInternal.startNextEpoch(browser);
-    SessionStoreInternal._browserEpochs.set(browser.permanentKey, epoch);
 
 		// keep the data around to prevent dataloss in case
 		// a tab gets closed before it's been properly restored

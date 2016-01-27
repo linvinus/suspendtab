@@ -44,7 +44,7 @@ var timer = require('lib/jstimer');
 var bundle = require('lib/locale')
 				.get('chrome://suspendtab/locale/label.properties');
 
-Cu.import('resource://gre/modules/Services.jsm');
+var { Services } = Cu.import('resource://gre/modules/Services.jsm', {});
 
 load('suspendtab-internal');
 

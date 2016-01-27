@@ -11,10 +11,13 @@ var timer = require('lib/jstimer');
 var SS = Cc['@mozilla.org/browser/sessionstore;1']
 			.getService(Ci.nsISessionStore);
 
-Cu.import('resource://gre/modules/Services.jsm');
+//~ Cu.import('resource://gre/modules/Services.jsm');
+var { Services } = Cu.import('resource://gre/modules/Services.jsm', {});
 
 var { SessionStoreInternal } = Cu.import('resource:///modules/sessionstore/SessionStore.jsm', {});
-var { TAB_STATE_NEEDS_RESTORE } = Cu.import('resource:///modules/sessionstore/SessionStore.jsm', {});
+//~ var { TAB_STATE_NEEDS_RESTORE } = Cu.import('resource:///modules/sessionstore/SessionStore.jsm', {});
+const TAB_STATE_NEEDS_RESTORE = 1;
+const TAB_STATE_RESTORING = 2;
 //var { TabRestoreStates } = Cu.import('resource:///modules/sessionstore/SessionStore.jsm', {});
 var { TabState } = Cu.import('resource:///modules/sessionstore/TabState.jsm', {});
 var { TabStateCache } = Cu.import('resource:///modules/sessionstore/TabStateCache.jsm', {});

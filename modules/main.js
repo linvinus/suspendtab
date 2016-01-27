@@ -52,6 +52,7 @@ function handleWindow(aWindow)
 WindowManager.getWindows(TYPE_BROWSER).forEach(function(aWindow) {
 	aWindow.SuspendTab = new SuspendTab(aWindow);
 });
+
 WindowManager.addHandler(handleWindow);
 
 function shutdown()
